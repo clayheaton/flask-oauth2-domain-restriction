@@ -34,6 +34,12 @@ def create_app(config):
     def index():
         return render_template('index.html')
 
+    # This route requires login.
+    @app.route("/restricted")
+    @oauth2.required
+    def index():
+        return render_template('restricted.html')
+
     return app
 
 
