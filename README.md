@@ -8,9 +8,9 @@ One user [forked the oauth2client library](https://github.com/google/oauth2clien
 
 This example recognizes that problem and accepts it, opting to reject users in the `_request_user_info()` function instead of through a fork of the library. In other words, the app tries to authenticate with Google, the response from Google is "ok." We then look at the domain name on the authenticated email address and reject it in the callback function associated with the OAuth session. 
 
-#### Using a modified version of the oauth2client library
+### Using a modified version of the oauth2client library
 
-To reject prior to storing the credentials, you have to use a fork of the oauth2client that compares a keyword argument with key `hd` sent to the flow with the `hd` value on the `credentials.id_token`, as referenced in the note above. If you are interested in that approach, [here's the link to a fork of the oauth2client library](https://github.com/clayheaton/oauth2client). The necessary change is in the [`flack_util.py`](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py) file around [line 424](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py#L424). When you init them app, you should send the extra `hd` argument:
+To reject prior to storing the credentials, you have to use a fork of the oauth2client that compares a keyword argument with key `hd` sent to the flow with the `hd` value on the `credentials.id_token`, as referenced in the note above. If you are interested in that approach, [here's the link to a fork of the oauth2client library](https://github.com/clayheaton/oauth2client). The necessary change is in the [`flack_util.py`](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py) file around [line 424](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py#L424). When you init the app, you send the extra `hd` argument, which enters the `flow_kwargs` of the oauth2 object:
 
 ```
 oauth2.init_app(
