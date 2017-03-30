@@ -6,10 +6,31 @@ Note that the [UserOAuth2](https://oauth2client.readthedocs.io/en/latest/source/
 
 One user [forked the oauth2client library](https://github.com/google/oauth2client/issues/677#issuecomment-262074257) to override the `callback_view()` method to prevent that. One of the library authors suggested that [he is unlikely](https://github.com/google/oauth2client/issues/677#issuecomment-290448996) to add new features to the library. 
 
-This example recognizes that problem and accepts it, opting to reject users in the `_request_user_info()` function instead of through a fork of the library.
+This example recognizes that problem and accepts it, opting to reject users in the `_request_user_info()` function instead of through a fork of the library. In other words, the app tries to authenticate with Google, the response from Google is "ok." We then look at the domain name on the authenticated email address and reject it in the callback function associated with the OAuth session. 
+
+#### Using a modified version of the oauth2client library
+
+To reject prior to storing the credentials, you have to use a fork of the oauth2client that compares a keyword argument with key `hd` sent to the flow with the `hd` value on the `credentials.id_token`, as referenced in the note above. If you are interested in that approach, [here's the link to a fork of the oauth2client library](https://github.com/clayheaton/oauth2client). The necessary change is in the [`flack_util.py`](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py) file around [line 424](https://github.com/clayheaton/oauth2client/blob/master/oauth2client/contrib/flask_util.py#L424). When you init them app, you should send the extra `hd` argument:
+
+```
+oauth2.init_app(
+    app,
+    scopes=['email', 'profile'],
+    authorize_callback=_request_user_info,
+    hd='thealloweddomain.com')
+``` 
+
+In that case, you can simplify the `_request_user_info()` function in `app.py` to remove the post-authentication check.
+
+----
 
 This is a highly modified version of Google's [Python Bookshelf App](https://cloud.google.com/python/getting-started/tutorial-app) example. I stripped out most features, functions, etc. that are not necessary to understand how to use oauth2client. 
 
+For security reasons, you should fork the oauth2client library and make the change yourself. You can then install your modified version of the library easily with pip as such:
+
+```
+pip install --upgrade https://github.com/yourgithubaccount/oauth2client/tarball/master
+```
 
 ----
 
