@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if session.profile %}
+        <p>You are logged in, {{ session.profile.name.givenName }}!</p>
+    {% else %}
+        <p>You are <strong>NOT</strong> logged in.</p>
+    {% endif %}
+
+{% endblock %}
